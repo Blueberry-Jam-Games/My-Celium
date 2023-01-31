@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public float movementSpeed = -2.0f;
+    public float height = 6.0f;
 
     float horizontalMovement = 0.0f;
     float verticalMovement = 0.0f;
@@ -13,7 +14,7 @@ public class Player : MonoBehaviour
     {
         Vector3 pos = transform.position;
         pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-        pos.y = pos.y + 6;
+        pos.y = pos.y + height;
         transform.position = pos;
     }
 
@@ -36,14 +37,14 @@ public class Player : MonoBehaviour
         {
             Vector3 pos = transform.position;
             pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-            pos.y = pos.y + 6;
+            pos.y = pos.y + height;
             pos.z = pos.z + movementSpeed;
             transform.position = pos;
         } else if (verticalMovement < 0.0f)
         {
             Vector3 pos = transform.position;
             pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-            pos.y = pos.y + 6;
+            pos.y = pos.y + height;
             pos.z = pos.z - movementSpeed;
             transform.position = pos;
         }
@@ -55,14 +56,14 @@ public class Player : MonoBehaviour
         {
             Vector3 pos = transform.position;
             pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-            pos.y = pos.y + 6;
+            pos.y = pos.y + height;
             pos.x = pos.x + movementSpeed;
             transform.position = pos;
         } else if (horizontalMovement < 0.0f)
         {
             Vector3 pos = transform.position;
             pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-            pos.y = pos.y + 6;
+            pos.y = pos.y + height;
             pos.x = pos.x - movementSpeed;
             transform.position = pos;
         }
