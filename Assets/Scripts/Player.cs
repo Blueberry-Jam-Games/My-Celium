@@ -33,14 +33,14 @@ public class Player : MonoBehaviour
 
     void VerticalMovementPlayer()
     {
-        if (verticalMovement > 0.0f)
+        if (verticalMovement < 0.0f)
         {
             Vector3 pos = transform.position;
             pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
             pos.y = pos.y + height;
             pos.z = pos.z + movementSpeed;
             transform.position = pos;
-        } else if (verticalMovement < 0.0f)
+        } else if (verticalMovement > 0.0f)
         {
             Vector3 pos = transform.position;
             pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
@@ -66,6 +66,22 @@ public class Player : MonoBehaviour
             pos.y = pos.y + height;
             pos.x = pos.x - movementSpeed;
             transform.position = pos;
+        }
+    }
+
+    void OnTriggerEnter(Collider collider)
+    {
+        if (collider.CompareTag("Mushroom"))
+        {
+            Debug.Log("I have entered");
+        }
+    }
+
+    void OnTriggerExit(Collider collider)
+    {
+        if (collider.CompareTag("Mushroom"))
+        {
+            Debug.Log("I have exited");
         }
     }
 }
