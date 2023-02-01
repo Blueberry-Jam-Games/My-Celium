@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float movementSpeed = -2.0f;
-    public float height = 6.0f;
+    public float movementSpeed = 1.0f;
+    public float height = 1.0f;
 
     float horizontalMovement = 0.0f;
     float verticalMovement = 0.0f;
@@ -33,14 +33,14 @@ public class Player : MonoBehaviour
 
     void VerticalMovementPlayer()
     {
-        if (verticalMovement > 0.0f)
+        if (verticalMovement < 0.0f)
         {
             Vector3 pos = transform.position;
             pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
             pos.y = pos.y + height;
             pos.z = pos.z + movementSpeed;
             transform.position = pos;
-        } else if (verticalMovement < 0.0f)
+        } else if (verticalMovement > 0.0f)
         {
             Vector3 pos = transform.position;
             pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
@@ -52,20 +52,34 @@ public class Player : MonoBehaviour
 
     void HorizontalMovementPlayer()
     {
-        if (horizontalMovement > 0.0f)
+        if (horizontalMovement < 0.0f)
         {
             Vector3 pos = transform.position;
             pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
             pos.y = pos.y + height;
             pos.x = pos.x + movementSpeed;
             transform.position = pos;
-        } else if (horizontalMovement < 0.0f)
+        } else if (horizontalMovement > 0.0f)
         {
             Vector3 pos = transform.position;
             pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
             pos.y = pos.y + height;
             pos.x = pos.x - movementSpeed;
             transform.position = pos;
+        }
+    }
+    void OnTriggerEnter(Collider collider)
+    {
+        if (collider.CompareTag("Mushroom"))
+        {
+            Debug.Log("I have entered");
+        }
+    }
+    void OnTriggerExit(Collider collider)
+    {
+        if (collider.CompareTag("Mushroom"))
+        {
+            Debug.Log("I have exited");
         }
     }
 }
