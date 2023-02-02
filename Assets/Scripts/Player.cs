@@ -9,6 +9,10 @@ public class Player : MonoBehaviour
 
     float horizontalMovement = 0.0f;
     float verticalMovement = 0.0f;
+
+    private bool enableKey = false;
+    public GameObject objectToSpawn;
+    public float spacing = 3.0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +33,7 @@ public class Player : MonoBehaviour
     {
         VerticalMovementPlayer();
         HorizontalMovementPlayer();
+        SpawnMushroom();
     }
 
     void VerticalMovementPlayer()
@@ -68,10 +73,30 @@ public class Player : MonoBehaviour
             transform.position = pos;
         }
     }
+
+    void SpawnMushroom()
+    {
+        if (enableKey && Input.GetKeyDown("e"))
+        {
+            Debug.Log("Pressed e");
+            GameObject newMushroom = Instantiate(objectToSpawn);
+
+            Vector3 pos = transform.position;
+            pos.x = pos.x - spacing;
+            
+            newMushroom.transform.position = pos;
+
+            GameObject rootMushroom = GameObject.FindWithTag("MushroomRoot");
+
+            rootMushroom.GetComponent<MushroomRoot>().mushrooms.Add(newMushroom);
+        }
+    }
+
     void OnTriggerEnter(Collider collider)
     {
         if (collider.CompareTag("Mushroom"))
         {
+            enableKey = true;
             Debug.Log("I have entered");
         }
     }
@@ -79,6 +104,7 @@ public class Player : MonoBehaviour
     {
         if (collider.CompareTag("Mushroom"))
         {
+            enableKey = false;
             Debug.Log("I have exited");
         }
     }
