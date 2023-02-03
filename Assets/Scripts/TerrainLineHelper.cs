@@ -4,17 +4,7 @@ using UnityEngine;
 
 public class TerrainLineHelper : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
 
 public class Line
@@ -29,7 +19,23 @@ public class Line
         this.x1 = x1;
     }
 
-    private void plot(float[,,] bitmap, float x, float y, float c)
+    public void Apply(float newX0, float newY0, float newX1, float newY1)
+    {
+        this.x0 = newX0;
+        this.y0 = newY0;
+        this.x1 = newX1;
+        this.y1 = newY1;
+    }
+
+    public void Apply(Vector3 zero, Vector3 one)
+    {
+        this.x0 = zero.x;
+        this.y0 = zero.y;
+        this.x1 = one.x;
+        this.y1 = one.y;
+    }
+
+    private void plot(float[,,] bitmap, float x, float y, int z, float c)
     {
         int alpha = (int)(c * 255);
         if (alpha > 255) alpha = 255;
@@ -51,16 +57,16 @@ public class Line
 
         // at the top, use the full value, at the bottom use 1-full
         float topLeft = Average(1 - fX, fY) * c;
-        bitmap[bottomX, topY, 0] = Mathf.Max(bitmap[bottomX, topY, 0], topLeft);
+        bitmap[bottomX, topY, z] = Mathf.Max(bitmap[bottomX, topY, 0], topLeft);
 
         float bottomLeft = Average(1 - fX, 1 - fY);
-        bitmap[bottomX, bottomY, 0] = Mathf.Max(bitmap[bottomX, bottomY, 0], bottomLeft);
+        bitmap[bottomX, bottomY, z] = Mathf.Max(bitmap[bottomX, bottomY, 0], bottomLeft);
 
         float bottomRight = Average(fX, 1 - fY);
-        bitmap[topX, bottomY, 0] = Mathf.Max(bitmap[topX, bottomY, 0], bottomRight);
+        bitmap[topX, bottomY, z] = Mathf.Max(bitmap[topX, bottomY, 0], bottomRight);
         
         float topRight = Average(fX, fY);
-        bitmap[topX, topY, 0] = Mathf.Max(bitmap[topX, topY, 0], topRight);
+        bitmap[topX, topY, z] = Mathf.Max(bitmap[topX, topY, 0], topRight);
     }
 
     private float Average(float f1, float f2)
@@ -81,7 +87,21 @@ public class Line
         return 1-fpart(x);
     }
 
-    public void draw(float[,,] bitmap) {
+    public void DrawPartial(float[,,] bitmap, int z, float percent)
+    {
+        float originalX1 = x1;
+        float originalY1 = y1;
+
+        x1 = Mathf.Lerp(x0, x1, percent);
+        y1 = Mathf.Lerp(y0, y1, percent);
+
+        draw(bitmap, z);
+
+        x1 = originalX1;
+        y1 = originalY1;
+    }
+
+    public void draw(float[,,] bitmap, int z) {
         bool steep = Mathf.Abs(y1-y0) > Mathf.Abs(x1-x0);
         float temp;
         if(steep){
@@ -104,11 +124,11 @@ public class Line
         float yPixel1 = ipart(yEnd);
 
         if(steep){
-            plot(bitmap, yPixel1,   xPixel1, rfpart(yEnd)*xGap);
-            plot(bitmap, yPixel1+1, xPixel1,  fpart(yEnd)*xGap);
+            plot(bitmap, yPixel1,   xPixel1, z, rfpart(yEnd)*xGap);
+            plot(bitmap, yPixel1+1, xPixel1, z, fpart(yEnd)*xGap);
         }else{
-            plot(bitmap, xPixel1,yPixel1, rfpart(yEnd)*xGap);
-            plot(bitmap, xPixel1, yPixel1+1, fpart(yEnd)*xGap);
+            plot(bitmap, xPixel1,yPixel1, z, rfpart(yEnd)*xGap);
+            plot(bitmap, xPixel1, yPixel1+1, z, fpart(yEnd)*xGap);
         }
         float intery = yEnd+gradient;
 
@@ -118,23 +138,23 @@ public class Line
         float xPixel2 = xEnd;
         float yPixel2 = ipart(yEnd);
         if(steep){
-            plot(bitmap, yPixel2,   xPixel2, rfpart(yEnd)*xGap);
-            plot(bitmap, yPixel2+1, xPixel2, fpart(yEnd)*xGap);
+            plot(bitmap, yPixel2,   xPixel2, z, rfpart(yEnd)*xGap);
+            plot(bitmap, yPixel2+1, xPixel2, z, fpart(yEnd)*xGap);
         }else{
-            plot(bitmap, xPixel2, yPixel2, rfpart(yEnd)*xGap);
-            plot(bitmap, xPixel2, yPixel2+1, fpart(yEnd)*xGap);
+            plot(bitmap, xPixel2, yPixel2, z, (yEnd)*xGap);
+            plot(bitmap, xPixel2, yPixel2+1, z, fpart(yEnd)*xGap);
         }
 
         if(steep){
             for(int x=(int)(xPixel1+1);x<=xPixel2-1;x++){
-                plot(bitmap, ipart(intery), x, rfpart(intery));
-                plot(bitmap, ipart(intery)+1, x, fpart(intery));
+                plot(bitmap, ipart(intery), x, z, rfpart(intery));
+                plot(bitmap, ipart(intery)+1, x, z, fpart(intery));
                 intery+=gradient;
             }
         }else{
             for(int x=(int)(xPixel1+1);x<=xPixel2-1;x++){
-                plot(bitmap, x,ipart(intery), rfpart(intery));
-                plot(bitmap, x, ipart(intery)+1, fpart(intery));
+                plot(bitmap, x,ipart(intery), z, rfpart(intery));
+                plot(bitmap, x, ipart(intery)+1, z, fpart(intery));
                 intery+=gradient;
             }
         }
