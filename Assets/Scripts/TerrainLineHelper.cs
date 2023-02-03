@@ -19,6 +19,22 @@ public class Line
         this.x1 = x1;
     }
 
+    public void Apply(float newX0, float newY0, float newX1, float newY1)
+    {
+        this.x0 = newX0;
+        this.y0 = newY0;
+        this.x1 = newX1;
+        this.y1 = newY1;
+    }
+
+    public void Apply(Vector3 zero, Vector3 one)
+    {
+        this.x0 = zero.x;
+        this.y0 = zero.y;
+        this.x1 = one.x;
+        this.y1 = one.y;
+    }
+
     private void plot(float[,,] bitmap, float x, float y, int z, float c)
     {
         int alpha = (int)(c * 255);
