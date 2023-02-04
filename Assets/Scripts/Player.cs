@@ -101,47 +101,12 @@ public class Player : MonoBehaviour
 
     void VerticalMovementPlayer()
     {
-        // if (verticalMovement < 0.0f)
-        // {
-        //     Vector3 pos = transform.position;
-        //     pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-        //     pos.y = pos.y + height;
-        //     pos.z = pos.z + movementSpeed;
-        //     Raycast(pos);
-        //     transform.position = pos;
-        // } else if (verticalMovement > 0.0f)
-        // {
-        //     Vector3 pos = transform.position;
-        //     pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-        //     pos.y = pos.y + height;
-        //     pos.z = pos.z - movementSpeed;
-        //     Raycast(pos);
-        //     transform.position = pos;
-        // }
-        rb.velocity = new Vector3(rb.velocity.x, 0, movementSpeed);
+        rb.velocity = new Vector3(rb.velocity.x, 0f, verticalMovement * movementSpeed * -1f);
     }
 
     void HorizontalMovementPlayer()
     {
-        // if (horizontalMovement < 0.0f)
-        // {
-        //     Vector3 pos = transform.position;
-        //     pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-        //     pos.y = pos.y + height;
-        //     pos.x = pos.x + movementSpeed;
-        //     Raycast(pos);
-        //     transform.position = pos;
-        // }
-        // else if (horizontalMovement > 0.0f)
-        // {
-        //     Vector3 pos = transform.position;
-        //     pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-        //     pos.y = pos.y + height;
-        //     pos.x = pos.x - movementSpeed;
-        //     Raycast(pos);
-        //     transform.position = pos;
-        // }
-        rb.velocity = new Vector3(movementSpeed, 0, rb.velocity.z);
+        rb.velocity = new Vector3(horizontalMovement * movementSpeed * -1f, 0f, rb.velocity.z);
     }
 
     private void LateUpdate()
@@ -149,22 +114,6 @@ public class Player : MonoBehaviour
         Vector3 pos = transform.position;
         pos.y = Terrain.activeTerrain.SampleHeight(transform.position) + height;
         transform.position = pos;
-    }
-
-    private bool Raycast(Vector3 endPosition)
-    {
-        Vector3 direction = (endPosition - transform.position);
-        
-        bool hit = Physics.Raycast(transform.position, direction, direction.magnitude * 1.01f, 0, QueryTriggerInteraction.Ignore);
-        if(hit)
-        {
-            Debug.DrawRay(transform.position, direction * 1.01f, Color.red, 0.125f);
-        }
-        else
-        {
-            Debug.DrawRay(transform.position, direction * 1.01f, Color.blue, 0.125f);
-        }
-        return hit;
     }
 
     void SpawnMushroom()
@@ -188,12 +137,17 @@ public class Player : MonoBehaviour
     {
         if (collider.CompareTag("Mushroom"))
         {
+            Debug.Log("I have entered");
             currentlyIn = collider.GetComponent<MushroomNode>();
             if(currentlyIn.Grown())
             {
                 enableKey = true;
                 Debug.Log("I have entered");
             }
+        } else if (collider.CompareTag("Cauldron"))
+        {
+            GameObject popUp = GameObject.FindWithTag("PopUps");
+            popUp.GetComponent<PopUpScreens>().EnableCauldronUpgrade();
         }
     }
     void OnTriggerExit(Collider collider)
