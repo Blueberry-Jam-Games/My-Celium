@@ -140,21 +140,6 @@ public class Player : MonoBehaviour
 
             rootMushroom.children.Add(component);
             currentlyIn.children.Add(component);
-
-            if (gameplayManager.state == GameplayManager.gameState.Level1)
-            {
-                gameplayManager.SetSpore1(gameplayManager.GetSpore1() + spore1Increase);
-            } else if (gameplayManager.state == GameplayManager.gameState.Level2)
-            {
-                gameplayManager.SetSpore1(gameplayManager.GetSpore1() + spore1Increase);
-                gameplayManager.SetSpore2(gameplayManager.GetSpore2() + spore2Increase);
-            } else {
-                gameplayManager.SetSpore1(gameplayManager.GetSpore1() + spore1Increase);
-                gameplayManager.SetSpore2(gameplayManager.GetSpore2() + spore2Increase);
-                gameplayManager.SetSpore3(gameplayManager.GetSpore3() + spore3Increase);
-            }
-
-            popUp.UpdateSporeCounter();
         }
     }
 

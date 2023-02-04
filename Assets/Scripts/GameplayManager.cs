@@ -9,13 +9,16 @@ public class GameplayManager : MonoBehaviour
     private int spore3 = 0;
 
     public gameState state;
-    // Start is called before the first frame update
+    private PopUpScreens popUp;
+
     void Start()
     {
         state = gameState.Level1;
         spore1 = 0;
         spore2 = 0;
         spore3 = 0;
+
+        popUp = GameObject.FindWithTag("PopUps").GetComponent<PopUpScreens>();
     }
 
     public int GetSpore1()
@@ -46,6 +49,23 @@ public class GameplayManager : MonoBehaviour
     public void SetSpore3(int addition)
     {
         spore3 = addition;
+    }
+
+    public void AddSpores(int variant, int count)
+    {
+        if(variant == 0)
+        {
+            spore1 += count;
+        }
+        else if(variant == 1)
+        {
+            spore2 += count;
+        }
+        else if(variant == 2)
+        {
+            spore3 += count;
+        }
+        popUp.UpdateSporeCounter();
     }
 
     public void IncreaseLevel()

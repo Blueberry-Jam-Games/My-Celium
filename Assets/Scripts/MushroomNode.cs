@@ -5,16 +5,23 @@ using UnityEngine;
 public class MushroomNode : MushroomHolder
 {
     public float height = 0;
-    public float growthTime = 15;
+    public float[] growthTime = new float[]{15, 10, 20};
 
     private float startTime;
     public float growth = 0f;
 
     public float Growth {get => growth;}
 
-    // Start is called before the first frame update
+    public int[] VariantSpores = new int[]{5, 10, 15};
+
+    private bool initialGrowth = false;
+
+    private GameplayManager gameplayManager;
+
     void Start()
     {
+        gameplayManager = GameObject.FindWithTag("GameplayManager").GetComponent<GameplayManager>();
+
         children = new List<MushroomNode>();
 
         Vector3 pos = transform.position;
@@ -26,13 +33,12 @@ public class MushroomNode : MushroomHolder
         UpdateScale();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(growth < 1f)
         {
             float deltaTime = Time.time - startTime;
-            growth = deltaTime / growthTime;
+            growth = deltaTime / growthTime[0]; // TODO replace [0] with variant 
             if(growth >= 1f)
             {
                 growth = 1f;
@@ -41,7 +47,23 @@ public class MushroomNode : MushroomHolder
         }
         else
         {
-            // Can produce spores and expand
+            if(!initialGrowth)
+            {
+                initialGrowth = true;
+                StartCoroutine(ProduceSpores());
+                // Some visual effect about being grown
+            }
+        }
+    }
+
+    private IEnumerator ProduceSpores()
+    {
+        WaitForSeconds delay = new WaitForSeconds(0.5f);
+        while(this.isActiveAndEnabled)
+        {
+            gameplayManager.AddSpores(0, VariantSpores[0]); // TODO Replace 0 with the spore variant
+            yield return delay;
+
         }
     }
 

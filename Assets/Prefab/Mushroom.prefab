@@ -113,8 +113,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   children: []
   height: 0
-  growthTime: 15
+  growthTime:
+  - 15
+  - 10
+  - 20
   growth: 0
+  VariantSpores: 050000000a0000000f000000
 --- !u!1 &5249481882928999431
 GameObject:
   m_ObjectHideFlags: 0
