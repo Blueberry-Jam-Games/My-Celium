@@ -9,6 +9,7 @@ TagManager:
   - Tree
   - Cauldron
   - PopUps
+  - GameplayManager
   layers:
   - Default
   - TransparentFX

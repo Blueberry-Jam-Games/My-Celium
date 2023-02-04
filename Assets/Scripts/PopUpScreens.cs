@@ -1,29 +1,85 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
 
 public class PopUpScreens : MonoBehaviour
 {
+    [Header("Cauldron Objects")]
     public GameObject cauldronUpgrade;
+    private TextMeshProUGUI sporeOneText;
+    private TextMeshProUGUI sporeTwoText;
+    private TextMeshProUGUI sporeThreeText;
+    private Image button2;
+    private Image button3;
+
+    [Header("Witch Objects")]
     public GameObject witchUpgrade;
 
     [Header("Text References")]
     public GameObject textPopUp;
-    public GameObject text;
-    private TextMeshPro textObject;
+    private TextMeshProUGUI textObject;
 
     [Header("Spore References")]
     public GameObject sporeCounter;
+    private TextMeshProUGUI sporeOneCounter;
+    private TextMeshProUGUI sporeTwoCounter;
+    private TextMeshProUGUI sporeThreeCounter;
+
+    private GameplayManager gameplayManager;
 
     void Start()
     {
-        textObject = text.GetComponent<TextMeshPro>();
+        sporeOneText = GameObject.Find("CauldronUpgrade/Currency/Currency1/Count").GetComponent<TextMeshProUGUI>();
+        sporeTwoText = GameObject.Find("CauldronUpgrade/Currency/Currency2/Count").GetComponent<TextMeshProUGUI>();
+        sporeThreeText = GameObject.Find("CauldronUpgrade/Currency/Currency3/Count").GetComponent<TextMeshProUGUI>();
+        sporeOneCounter = GameObject.Find("SporeCounter/Spore1").GetComponent<TextMeshProUGUI>();
+        sporeTwoCounter = GameObject.Find("SporeCounter/Spore2").GetComponent<TextMeshProUGUI>();
+        button2 = GameObject.Find("CauldronUpgrade/UpgradeView/Centerer/PathHeight/SkillTree1 (1)/Skill1").GetComponent<Image>();
+        button3 = GameObject.Find("CauldronUpgrade/UpgradeView/Centerer/PathHeight/SkillTree1 (1)/Skill2").GetComponent<Image>();
+        sporeThreeCounter = GameObject.Find("SporeCounter/Spore3").GetComponent<TextMeshProUGUI>();
+        textObject = GameObject.Find("PopUpInstruction/PopUp").GetComponent<TextMeshProUGUI>();
+        gameplayManager = GameObject.FindWithTag("GameplayManager").GetComponent<GameplayManager>();
+    }
+
+    public void Level2Check()
+    {
+        if (gameplayManager.GetSpore1() >= 50)
+        {
+            button2.color = new Color32(0, 255, 249, 255);
+            gameplayManager.SetSpore1(gameplayManager.GetSpore1() - 50);
+            sporeOneText.text = gameplayManager.GetSpore1().ToString();
+            gameplayManager.IncreaseLevel();
+            UpdateSporeCounter();
+        }
+    }
+
+    public void Level3Check()
+    {
+        if (gameplayManager.GetSpore2() >= 50)
+        {
+            button3.color = new Color32(0, 255, 249, 255);
+            gameplayManager.SetSpore2(gameplayManager.GetSpore2() - 50);
+            sporeTwoText.text = gameplayManager.GetSpore2().ToString();
+            gameplayManager.IncreaseLevel();
+            UpdateSporeCounter();
+        }
+    }
+
+    public void UpdateSporeCounter()
+    {
+        sporeOneCounter.text = "Spore 1: " + gameplayManager.GetSpore1().ToString();
+        sporeTwoCounter.text = "Spore 2: " + gameplayManager.GetSpore2().ToString();
+        sporeThreeCounter.text = "Spore 3: " + gameplayManager.GetSpore3().ToString();
     }
 
     public void EnableCauldronUpgrade()
     {
         cauldronUpgrade.GetComponent<Canvas>().enabled = true;
+        sporeOneText.text = gameplayManager.GetSpore1().ToString();
+        sporeTwoText.text = gameplayManager.GetSpore2().ToString();
+        sporeThreeText.text = gameplayManager.GetSpore3().ToString();
     }
 
     public void DisableCauldronUpgrade()
@@ -44,13 +100,13 @@ public class PopUpScreens : MonoBehaviour
     public void EnableTextPopUpUpgrade(string popUp)
     {
         textPopUp.GetComponent<Canvas>().enabled = true;
-        textObject.SetText(popUp);
+        textObject.text = popUp;
     }
 
     public void DisableTextPopUpUpgrade()
     {
         textPopUp.GetComponent<Canvas>().enabled = false;
-        textObject.SetText("");
+        textObject.text = "";
     }
 
     public void EnableSporeCounterUpgrade()

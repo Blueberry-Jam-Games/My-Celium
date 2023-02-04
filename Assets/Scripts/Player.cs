@@ -19,6 +19,14 @@ public class Player : MonoBehaviour
 
     private Rigidbody rb;
     private Animator animator;
+    private GameplayManager gameplayManager;
+
+    [Header("Spore Increases")]
+    public int spore1Increase = 10;
+    public int spore2Increase = 10;
+    public int spore3Increase = 10;
+
+    private PopUpScreens popUp;
 
     void Start()
     {
@@ -29,6 +37,8 @@ public class Player : MonoBehaviour
         rootMushroom = GameObject.FindWithTag("MushroomRoot").GetComponent<MushroomRoot>();
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+        gameplayManager = GameObject.FindWithTag("GameplayManager").GetComponent<GameplayManager>();
+        popUp = GameObject.FindWithTag("PopUps").GetComponent<PopUpScreens>();
     }
 
     AnimationState animState = AnimationState.IDLE_R;
@@ -130,6 +140,21 @@ public class Player : MonoBehaviour
 
             rootMushroom.children.Add(component);
             currentlyIn.children.Add(component);
+
+            if (gameplayManager.state == GameplayManager.gameState.Level1)
+            {
+                gameplayManager.SetSpore1(gameplayManager.GetSpore1() + spore1Increase);
+            } else if (gameplayManager.state == GameplayManager.gameState.Level2)
+            {
+                gameplayManager.SetSpore1(gameplayManager.GetSpore1() + spore1Increase);
+                gameplayManager.SetSpore2(gameplayManager.GetSpore2() + spore2Increase);
+            } else {
+                gameplayManager.SetSpore1(gameplayManager.GetSpore1() + spore1Increase);
+                gameplayManager.SetSpore2(gameplayManager.GetSpore2() + spore2Increase);
+                gameplayManager.SetSpore3(gameplayManager.GetSpore3() + spore3Increase);
+            }
+
+            popUp.UpdateSporeCounter();
         }
     }
 
@@ -137,6 +162,7 @@ public class Player : MonoBehaviour
     {
         if (collider.CompareTag("Mushroom"))
         {
+            popUp.EnableTextPopUpUpgrade("Press e to plant a Mushroom");
             Debug.Log("I have entered");
             currentlyIn = collider.GetComponent<MushroomNode>();
             if(currentlyIn.Grown())
@@ -146,14 +172,14 @@ public class Player : MonoBehaviour
             }
         } else if (collider.CompareTag("Cauldron"))
         {
-            GameObject popUp = GameObject.FindWithTag("PopUps");
-            popUp.GetComponent<PopUpScreens>().EnableCauldronUpgrade();
+            popUp.EnableCauldronUpgrade();
         }
     }
     void OnTriggerExit(Collider collider)
     {
         if (collider.CompareTag("Mushroom"))
         {
+            popUp.DisableTextPopUpUpgrade();
             enableKey = false;
             Debug.Log("I have exited");
             currentlyIn = null;
