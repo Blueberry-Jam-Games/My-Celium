@@ -12,7 +12,12 @@ public class Player : MonoBehaviour
 
     private bool enableKey = false;
     public GameObject objectToSpawn;
-    public float spacing = 3.0f;
+    public Vector3 mushroomOffset;
+
+    private MushroomRoot rootMushroom;
+    private MushroomNode currentlyIn = null;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +25,7 @@ public class Player : MonoBehaviour
         pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
         pos.y = pos.y + height;
         transform.position = pos;
+        rootMushroom = GameObject.FindWithTag("MushroomRoot").GetComponent<MushroomRoot>();
     }
 
     // Update is called once per frame
@@ -76,19 +82,18 @@ public class Player : MonoBehaviour
 
     void SpawnMushroom()
     {
-        if (enableKey && Input.GetKeyDown("e"))
+        if (enableKey && Input.GetKeyDown(KeyCode.E))
         {
             Debug.Log("Pressed e");
             GameObject newMushroom = Instantiate(objectToSpawn);
+            MushroomNode component = newMushroom.GetComponent<MushroomNode>();
 
-            Vector3 pos = transform.position;
-            pos.x = pos.x - spacing;
-            
+            Vector3 pos = transform.position + mushroomOffset;
+
             newMushroom.transform.position = pos;
 
-            GameObject rootMushroom = GameObject.FindWithTag("MushroomRoot");
-
-            rootMushroom.GetComponent<MushroomRoot>().mushrooms.Add(newMushroom);
+            rootMushroom.children.Add(component);
+            currentlyIn.children.Add(component);
         }
     }
 
@@ -96,8 +101,12 @@ public class Player : MonoBehaviour
     {
         if (collider.CompareTag("Mushroom"))
         {
-            enableKey = true;
-            Debug.Log("I have entered");
+            currentlyIn = collider.GetComponent<MushroomNode>();
+            if(currentlyIn.Grown())
+            {
+                enableKey = true;
+                Debug.Log("I have entered");
+            }
         }
     }
     void OnTriggerExit(Collider collider)
@@ -106,6 +115,7 @@ public class Player : MonoBehaviour
         {
             enableKey = false;
             Debug.Log("I have exited");
+            currentlyIn = null;
         }
     }
 }

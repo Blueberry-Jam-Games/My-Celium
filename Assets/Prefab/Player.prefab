@@ -102,7 +102,7 @@ MonoBehaviour:
   height: 1
   objectToSpawn: {fileID: 924669222973577146, guid: 583809dca9b5640bfb000abf324ddc7b,
     type: 3}
-  spacing: 3
+  mushroomOffset: {x: 0, y: 0, z: -1}
 --- !u!65 &4998482053573255231
 BoxCollider:
   m_ObjectHideFlags: 0

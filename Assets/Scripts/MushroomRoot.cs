@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MushroomRoot : MonoBehaviour
+public class MushroomRoot : MushroomHolder
 {
-    public List<GameObject> mushrooms;
+    public MushroomNode rootShroom;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -16,4 +17,9 @@ public class MushroomRoot : MonoBehaviour
     {
         
     }
+}
+
+public abstract class MushroomHolder : MonoBehaviour
+{
+    public List <MushroomNode> children;
 }
