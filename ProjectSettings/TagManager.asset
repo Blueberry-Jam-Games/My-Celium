@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Mushroom
   - MushroomRoot
+  - Cauldron
+  - PopUps
   layers:
   - Default
   - TransparentFX

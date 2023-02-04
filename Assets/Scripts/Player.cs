@@ -98,6 +98,10 @@ public class Player : MonoBehaviour
         {
             enableKey = true;
             Debug.Log("I have entered");
+        } else if (collider.CompareTag("Cauldron"))
+        {
+            GameObject popUp = GameObject.FindWithTag("PopUps");
+            popUp.GetComponent<PopUpScreens>().EnableCauldronUpgrade();
         }
     }
     void OnTriggerExit(Collider collider)
