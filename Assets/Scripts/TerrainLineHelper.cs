@@ -30,9 +30,9 @@ public class Line
     public void Apply(Vector3 zero, Vector3 one)
     {
         this.x0 = zero.x;
-        this.y0 = zero.y;
+        this.y0 = zero.z;
         this.x1 = one.x;
-        this.y1 = one.y;
+        this.y1 = one.z;
     }
 
     private void plot(float[,,] bitmap, float x, float y, int z, float c)
@@ -47,11 +47,20 @@ public class Line
             return;
         }
 
-        int bottomX = ipart(x);
+        int bottomX = Mathf.RoundToInt(x);
         int topX = bottomX + 1;
-        int bottomY = ipart(y);
+        int bottomY = Mathf.RoundToInt(y);
         int topY = bottomY + 1;
+
+        // Debug.Log($"Plotting {x},{y} bottom x {bottomX}, topX {topX}, bottomY {bottomY}, topY {topY}");
         
+        if(bottomX < 0 || bottomX >= bitmap.GetLength(0) || bottomY < 0 || bottomY >= bitmap.GetLength(1)
+            || topX < 0 || topX >= bitmap.GetLength(0) || topY < 0 || topY >= bitmap.GetLength(1))
+        {
+            // Debug.LogWarning("WTF");
+            return;
+        }
+
         float fX = fpart(x);
         float fY = fpart(y);
 
@@ -89,11 +98,14 @@ public class Line
 
     public void DrawPartial(float[,,] bitmap, int z, float percent)
     {
+        // Debug.Log($"Drawing line {x0},{y0} to {x1},{y1} at percentage {percent}");
         float originalX1 = x1;
         float originalY1 = y1;
 
         x1 = Mathf.Lerp(x0, x1, percent);
         y1 = Mathf.Lerp(y0, y1, percent);
+
+        // Debug.Log($"Lerp applied to line line {x0},{y0} to {x1},{y1} at percentage {percent}");
 
         draw(bitmap, z);
 
