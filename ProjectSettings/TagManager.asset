@@ -8,6 +8,7 @@ TagManager:
   - MushroomRoot
   - Cauldron
   - PopUps
+  - GameplayManager
   layers:
   - Default
   - TransparentFX
