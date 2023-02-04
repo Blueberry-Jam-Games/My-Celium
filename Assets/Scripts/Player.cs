@@ -101,12 +101,17 @@ public class Player : MonoBehaviour
     {
         if (collider.CompareTag("Mushroom"))
         {
+            Debug.Log("I have entered");
             currentlyIn = collider.GetComponent<MushroomNode>();
             if(currentlyIn.Grown())
             {
                 enableKey = true;
                 Debug.Log("I have entered");
             }
+        } else if (collider.CompareTag("Cauldron"))
+        {
+            GameObject popUp = GameObject.FindWithTag("PopUps");
+            popUp.GetComponent<PopUpScreens>().EnableCauldronUpgrade();
         }
     }
     void OnTriggerExit(Collider collider)
