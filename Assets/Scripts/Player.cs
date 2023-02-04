@@ -17,6 +17,8 @@ public class Player : MonoBehaviour
     private MushroomRoot rootMushroom;
     private MushroomNode currentlyIn = null;
 
+    private Rigidbody rb;
+    private Animator animator;
     private GameplayManager gameplayManager;
 
     [Header("Spore Increases")]
@@ -26,7 +28,6 @@ public class Player : MonoBehaviour
 
     private PopUpScreens popUp;
 
-    // Start is called before the first frame update
     void Start()
     {
         Vector3 pos = transform.position;
@@ -34,60 +35,95 @@ public class Player : MonoBehaviour
         pos.y = pos.y + height;
         transform.position = pos;
         rootMushroom = GameObject.FindWithTag("MushroomRoot").GetComponent<MushroomRoot>();
+        rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
         gameplayManager = GameObject.FindWithTag("GameplayManager").GetComponent<GameplayManager>();
         popUp = GameObject.FindWithTag("PopUps").GetComponent<PopUpScreens>();
     }
 
-    // Update is called once per frame
+    AnimationState animState = AnimationState.IDLE_R;
+
     void Update()
     {
         horizontalMovement = Input.GetAxisRaw("Horizontal");
         verticalMovement = Input.GetAxisRaw("Vertical");
+        SpawnMushroom();
+
+        if(horizontalMovement == 0f && verticalMovement == 0f)
+        {
+            if(animState == AnimationState.RUN_R)
+            {
+                animState = AnimationState.IDLE_R;
+                animator.SetTrigger("IdleRight");
+            }
+            else if(animState == AnimationState.RUN_L)
+            {
+                animState = AnimationState.IDLE_L;
+                animator.SetTrigger("IdleLeft");
+            }
+        }
+        else if(animState == AnimationState.IDLE_L || animState == AnimationState.IDLE_R)
+        {
+            if(horizontalMovement < 0f)
+            {
+                animState = AnimationState.RUN_R;
+                animator.SetTrigger("RunRight");
+            }
+            else if(horizontalMovement > 0f)
+            {
+                animState = AnimationState.RUN_L;
+                animator.SetTrigger("RunLeft");
+            }
+            else if(horizontalMovement == 0f)
+            {
+                if(animState == AnimationState.IDLE_R)
+                {
+                    animState = AnimationState.RUN_R;
+                    animator.SetTrigger("RunRight");
+                }
+                else
+                {
+                    animState = AnimationState.RUN_L;
+                    animator.SetTrigger("RunLeft");
+                }
+            }
+        }
+        else
+        {
+            if(horizontalMovement < 0f && animState != AnimationState.RUN_R)
+            {
+                animState = AnimationState.RUN_R;
+                animator.SetTrigger("RunRight");
+            }
+            else if(horizontalMovement > 0f && animState != AnimationState.RUN_L)
+            {
+                animState = AnimationState.RUN_L;
+                animator.SetTrigger("RunLeft");
+            }
+        }
     }
 
     void FixedUpdate()
     {
         VerticalMovementPlayer();
         HorizontalMovementPlayer();
-        SpawnMushroom();
     }
 
     void VerticalMovementPlayer()
     {
-        if (verticalMovement < 0.0f)
-        {
-            Vector3 pos = transform.position;
-            pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-            pos.y = pos.y + height;
-            pos.z = pos.z + movementSpeed;
-            transform.position = pos;
-        } else if (verticalMovement > 0.0f)
-        {
-            Vector3 pos = transform.position;
-            pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-            pos.y = pos.y + height;
-            pos.z = pos.z - movementSpeed;
-            transform.position = pos;
-        }
+        rb.velocity = new Vector3(rb.velocity.x, 0f, verticalMovement * movementSpeed * -1f);
     }
 
     void HorizontalMovementPlayer()
     {
-        if (horizontalMovement < 0.0f)
-        {
-            Vector3 pos = transform.position;
-            pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-            pos.y = pos.y + height;
-            pos.x = pos.x + movementSpeed;
-            transform.position = pos;
-        } else if (horizontalMovement > 0.0f)
-        {
-            Vector3 pos = transform.position;
-            pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-            pos.y = pos.y + height;
-            pos.x = pos.x - movementSpeed;
-            transform.position = pos;
-        }
+        rb.velocity = new Vector3(horizontalMovement * movementSpeed * -1f, 0f, rb.velocity.z);
+    }
+
+    private void LateUpdate()
+    {
+        Vector3 pos = transform.position;
+        pos.y = Terrain.activeTerrain.SampleHeight(transform.position) + height;
+        transform.position = pos;
     }
 
     void SpawnMushroom()
@@ -149,4 +185,9 @@ public class Player : MonoBehaviour
             currentlyIn = null;
         }
     }
+}
+
+public enum AnimationState
+{
+    IDLE_R, IDLE_L, RUN_R, RUN_L
 }
