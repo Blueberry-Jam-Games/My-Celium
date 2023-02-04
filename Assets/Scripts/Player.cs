@@ -17,8 +17,9 @@ public class Player : MonoBehaviour
     private MushroomRoot rootMushroom;
     private MushroomNode currentlyIn = null;
 
+    private Rigidbody rb;
+    private Animator animator;
 
-    // Start is called before the first frame update
     void Start()
     {
         Vector3 pos = transform.position;
@@ -26,58 +27,144 @@ public class Player : MonoBehaviour
         pos.y = pos.y + height;
         transform.position = pos;
         rootMushroom = GameObject.FindWithTag("MushroomRoot").GetComponent<MushroomRoot>();
+        rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
+    AnimationState animState = AnimationState.IDLE_R;
+
     void Update()
     {
         horizontalMovement = Input.GetAxisRaw("Horizontal");
         verticalMovement = Input.GetAxisRaw("Vertical");
+        SpawnMushroom();
+
+        if(horizontalMovement == 0f && verticalMovement == 0f)
+        {
+            if(animState == AnimationState.RUN_R)
+            {
+                animState = AnimationState.IDLE_R;
+                animator.SetTrigger("IdleRight");
+            }
+            else if(animState == AnimationState.RUN_L)
+            {
+                animState = AnimationState.IDLE_L;
+                animator.SetTrigger("IdleLeft");
+            }
+        }
+        else if(animState == AnimationState.IDLE_L || animState == AnimationState.IDLE_R)
+        {
+            if(horizontalMovement < 0f)
+            {
+                animState = AnimationState.RUN_R;
+                animator.SetTrigger("RunRight");
+            }
+            else if(horizontalMovement > 0f)
+            {
+                animState = AnimationState.RUN_L;
+                animator.SetTrigger("RunLeft");
+            }
+            else if(horizontalMovement == 0f)
+            {
+                if(animState == AnimationState.IDLE_R)
+                {
+                    animState = AnimationState.RUN_R;
+                    animator.SetTrigger("RunRight");
+                }
+                else
+                {
+                    animState = AnimationState.RUN_L;
+                    animator.SetTrigger("RunLeft");
+                }
+            }
+        }
+        else
+        {
+            if(horizontalMovement < 0f && animState != AnimationState.RUN_R)
+            {
+                animState = AnimationState.RUN_R;
+                animator.SetTrigger("RunRight");
+            }
+            else if(horizontalMovement > 0f && animState != AnimationState.RUN_L)
+            {
+                animState = AnimationState.RUN_L;
+                animator.SetTrigger("RunLeft");
+            }
+        }
     }
 
     void FixedUpdate()
     {
         VerticalMovementPlayer();
         HorizontalMovementPlayer();
-        SpawnMushroom();
     }
 
     void VerticalMovementPlayer()
     {
-        if (verticalMovement < 0.0f)
-        {
-            Vector3 pos = transform.position;
-            pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-            pos.y = pos.y + height;
-            pos.z = pos.z + movementSpeed;
-            transform.position = pos;
-        } else if (verticalMovement > 0.0f)
-        {
-            Vector3 pos = transform.position;
-            pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-            pos.y = pos.y + height;
-            pos.z = pos.z - movementSpeed;
-            transform.position = pos;
-        }
+        // if (verticalMovement < 0.0f)
+        // {
+        //     Vector3 pos = transform.position;
+        //     pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
+        //     pos.y = pos.y + height;
+        //     pos.z = pos.z + movementSpeed;
+        //     Raycast(pos);
+        //     transform.position = pos;
+        // } else if (verticalMovement > 0.0f)
+        // {
+        //     Vector3 pos = transform.position;
+        //     pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
+        //     pos.y = pos.y + height;
+        //     pos.z = pos.z - movementSpeed;
+        //     Raycast(pos);
+        //     transform.position = pos;
+        // }
+        rb.velocity = new Vector3(rb.velocity.x, 0, movementSpeed);
     }
 
     void HorizontalMovementPlayer()
     {
-        if (horizontalMovement < 0.0f)
+        // if (horizontalMovement < 0.0f)
+        // {
+        //     Vector3 pos = transform.position;
+        //     pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
+        //     pos.y = pos.y + height;
+        //     pos.x = pos.x + movementSpeed;
+        //     Raycast(pos);
+        //     transform.position = pos;
+        // }
+        // else if (horizontalMovement > 0.0f)
+        // {
+        //     Vector3 pos = transform.position;
+        //     pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
+        //     pos.y = pos.y + height;
+        //     pos.x = pos.x - movementSpeed;
+        //     Raycast(pos);
+        //     transform.position = pos;
+        // }
+        rb.velocity = new Vector3(movementSpeed, 0, rb.velocity.z);
+    }
+
+    private void LateUpdate()
+    {
+        Vector3 pos = transform.position;
+        pos.y = Terrain.activeTerrain.SampleHeight(transform.position) + height;
+        transform.position = pos;
+    }
+
+    private bool Raycast(Vector3 endPosition)
+    {
+        Vector3 direction = (endPosition - transform.position);
+        
+        bool hit = Physics.Raycast(transform.position, direction, direction.magnitude * 1.01f, 0, QueryTriggerInteraction.Ignore);
+        if(hit)
         {
-            Vector3 pos = transform.position;
-            pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-            pos.y = pos.y + height;
-            pos.x = pos.x + movementSpeed;
-            transform.position = pos;
-        } else if (horizontalMovement > 0.0f)
-        {
-            Vector3 pos = transform.position;
-            pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
-            pos.y = pos.y + height;
-            pos.x = pos.x - movementSpeed;
-            transform.position = pos;
+            Debug.DrawRay(transform.position, direction * 1.01f, Color.red, 0.125f);
         }
+        else
+        {
+            Debug.DrawRay(transform.position, direction * 1.01f, Color.blue, 0.125f);
+        }
+        return hit;
     }
 
     void SpawnMushroom()
@@ -118,4 +205,9 @@ public class Player : MonoBehaviour
             currentlyIn = null;
         }
     }
+}
+
+public enum AnimationState
+{
+    IDLE_R, IDLE_L, RUN_R, RUN_L
 }
