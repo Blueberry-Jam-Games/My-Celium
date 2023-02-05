@@ -38,21 +38,6 @@ public class TerrainTransitionManager : MonoBehaviour
 
         Debug.Log("Terrain transition manager initialized at " + width + ", " + height + " layers " + tData.alphamapLayers);
 
-        // if(topX == -1) topX = width;
-        // if(topY == -1) topY = height;
-
-        // if(bottomX < 0) bottomX = 0;
-        // if(bottomX > width) bottomX = width;
-        
-        // if(topX < bottomX) topX = bottomX;
-        // if(topX > width) topX = width;
-
-        // if(bottomY < 0) bottomY = 0;
-        // if(bottomY > height) bottomY = height;
-
-        // if(topY < bottomY) topY = bottomY;
-        // if(topY > height) topY = height;
-
         ClearBuffers();
         UpdateMap();
         rootMushroom = GameObject.FindGameObjectWithTag("MushroomRoot");
@@ -62,6 +47,9 @@ public class TerrainTransitionManager : MonoBehaviour
     {
         ClearBuffers();
         GameObject[] mushroomObjs = GameObject.FindGameObjectsWithTag("Mushroom");
+
+        Debug.Log($"Terrain manager found {mushroomObjs.Length} mushrooms");
+
         List<MushroomNode> mushrooms = new List<MushroomNode>(mushroomObjs.Length); // TODO get from somewhere
         for(int i = 0, count = mushroomObjs.Length; i < count; i++)
         {
@@ -81,7 +69,7 @@ public class TerrainTransitionManager : MonoBehaviour
 
                 Debug.DrawLine(current.transform.position, currentChild.transform.position, Color.red, 0.25f);
 
-                line.Apply(current.transform.position + new Vector3(1, 0, 2), currentChild.transform.position + new Vector3(1, 0, 2));
+                line.Apply(current.transform.position, currentChild.transform.position);
                 line.DrawPartial(lineBuffer, 0, currentChild.Growth);
             }
         }
@@ -108,12 +96,12 @@ public class TerrainTransitionManager : MonoBehaviour
             secondSquared = (rootTransform - mushrooms[1].transform.position).sqrMagnitude;
         }
 
-        centerX += 1;
-        centerY += 2;
+        // centerX += 1;
+        // centerY += 2;
         int startY = (centerY - roundedRadius);
         int endY = (centerY + roundedRadius);
 
-        // Debug.Log($"Drawing circle at {roundedRadius}, and coords {centerX},{centerY} + with inner radius {secondSquared}");
+        // Debug.Log($"Drawing circle at {roundedRadius}, and coords {centerX},{centerY} with inner radius {secondSquared}, effective radius {roundedRadius}");
 
         for(int x = (centerX - roundedRadius), xc = (centerX + roundedRadius); x < xc; x++)
         {
@@ -127,6 +115,7 @@ public class TerrainTransitionManager : MonoBehaviour
                 {
                     float corruptionAmount = 0f;
                     float squareDistance = (Mathf.Pow(x - centerX, 2) + Mathf.Pow(y - centerY, 2));
+
                     if (squareDistance < secondSquared)
                     {
                         corruptionAmount = 1f;
@@ -138,13 +127,10 @@ public class TerrainTransitionManager : MonoBehaviour
 
                     float mushroomAmount = lineBuffer[x, y, 0];
 
-                    // Debug.Log($"Writing slot {x},{y}");
+                    mushroomAmount = Mathf.Clamp(mushroomAmount, 0f, 1f);
+                    corruptionAmount = Mathf.Clamp(corruptionAmount, 0f, 1f);
 
-                    // idk why but x and z are swapped (y becomes z)
-                    // if(corruptionAmount != 0f)
-                    // {
-                    //     Debug.Log($"Position {x},{y} has corruption {corruptionAmount}");
-                    // }
+                    // Debug.Log($"At postiion {x},{y} aith scores {corruptionAmount}, {mushroomAmount}");
 
                     map[y, x, CORRUPTED_MUSHROOM] = corruptionAmount * mushroomAmount;
                     map[y, x, UNCORRUPTED_MUSHROOM] = (1 - corruptionAmount) * mushroomAmount;
@@ -173,32 +159,9 @@ public class TerrainTransitionManager : MonoBehaviour
         }
     }
 
-    // private void clearBuffersRestricted()
-    // {
-    //     for(int x = bottomX, xc = topX; x < xc; x++)
-    //     {
-    //         for(int y = bottomY, yc = topY; y < yc; y++)
-    //         {
-    //             lineBuffer[x, y, 0] = 0f;
-    //             for(int z = 0, zc = map.GetLength(2); z < zc; z++)
-    //             {
-    //                 map[x, y, z] = (z == 0 ? 1f : 0f);
-    //             }
-    //         }
-    //     }
-    // }
-
     private void UpdateMap()
     {
         tData.SetAlphamaps(0, 0, map);
         terrain.Flush();
-        // Terrain.activeTerrain.terrainData.SetAlphamaps(0, 0, map);
     }
 }
-
-// public struct MushroomStub
-// {
-//     public Vector3 position;
-//     public float growth;
-//     public List<MushroomStub> children;
-// }
