@@ -68,7 +68,33 @@ public class CircularMenu : MonoBehaviour
             angle += 360;
         }
 
-        currentMenuItem = (int) (angle / (360 / menuItems));
+        Debug.Log(angle);
+
+        //currentMenuItem = (int) (angle / (360 / menuItems));
+
+        if((angle >= 0 && angle <= 45) || angle > 315 && angle < 360){
+
+            currentMenuItem = 0;
+
+        }
+
+        else if(angle > 45 && angle <= 135){
+
+            currentMenuItem = 1;
+
+        }
+
+        else if(angle > 135 && angle <= 225){
+
+            currentMenuItem = 2;
+
+        }
+
+        else if(angle > 225 && angle <= 315){
+
+            currentMenuItem = 3;
+
+        }
 
         if(currentMenuItem != oldMenuItem){
 
