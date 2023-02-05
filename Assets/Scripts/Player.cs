@@ -32,9 +32,9 @@ public class Player : MonoBehaviour
     public int spore3Increase = 10;
 
     private PopUpScreens popUp;
+    private CircularMenu circleMenu;
 
     private AnimationState animState = AnimationState.IDLE_R;
-
 
     void Start()
     {
@@ -47,6 +47,7 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         gameplayManager = GameObject.FindWithTag("GameplayManager").GetComponent<GameplayManager>();
         popUp = GameObject.FindWithTag("PopUps").GetComponent<PopUpScreens>();
+        circleMenu = GameObject.FindWithTag("PopUps").GetComponent<CircularMenu>();
     }
 
     private IEnumerator AttackFunction()
@@ -180,16 +181,35 @@ public class Player : MonoBehaviour
         if (enableKey && Input.GetKeyDown(KeyCode.E))
         {
             Debug.Log("Pressed e");
-            GameObject newMushroom = Instantiate(objectToSpawn);
-            MushroomNode component = newMushroom.GetComponent<MushroomNode>();
 
-            Vector3 pos = transform.position + mushroomOffset;
+            circleMenu.Pause();
 
-            newMushroom.transform.position = pos;
-
-            rootMushroom.children.Add(component);
-            currentlyIn.children.Add(component);
+            
         }
+    }
+
+    public void SpawnMushroomFunctionality(int variant)
+    {
+        GameObject newMushroom = Instantiate(objectToSpawn);
+        newMushroom.GetComponent<MushroomNode>().Configure(variant);
+        MushroomNode component = newMushroom.GetComponent<MushroomNode>();
+
+        if (variant == 0)
+        {
+            gameplayManager.SetSpore1(gameplayManager.GetSpore1() - 200);
+        } else if (variant == 1)
+        {
+            gameplayManager.SetSpore2(gameplayManager.GetSpore2() - 200);
+        } else {
+            gameplayManager.SetSpore3(gameplayManager.GetSpore3() - 200);
+        }
+
+        Vector3 pos = transform.position + mushroomOffset;
+
+        newMushroom.transform.position = pos;
+
+        rootMushroom.children.Add(component);
+        currentlyIn.children.Add(component);
     }
 
     void OnTriggerEnter(Collider collider)
