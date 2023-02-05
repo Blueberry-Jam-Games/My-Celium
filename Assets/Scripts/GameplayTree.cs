@@ -12,6 +12,7 @@ public class GameplayTree : MonoBehaviour
     public VisualEffect dust;
 
     private int captureCount = 0;
+    private int captureVariety = 0;
 
     public int state = 0; // 0 = normal, 1 = corrupted, 2 = log
     public float captureTime = 10f;
@@ -19,14 +20,17 @@ public class GameplayTree : MonoBehaviour
 
     public float fallTime = 1f;
 
+    public int sporeReward = 200;
+
     void Start()
     {
         UpdateState();
     }
 
-    public void AddCapture()
+    public void AddCapture(int captureVariety)
     {
         captureCount++;
+        this.captureVariety = captureVariety;
         if (captureCount == 1)
         {
             StartCoroutine(Capture());
@@ -47,9 +51,12 @@ public class GameplayTree : MonoBehaviour
 
     private IEnumerator Capture()
     {
-        yield return new WaitForSeconds(captureTime);
-        state = 1;
-        UpdateState();
+        if(state == 0)
+        {
+            yield return new WaitForSeconds(captureTime);
+            state = 1;
+            UpdateState();
+        }
 
         if(captureCount != 0)
         {
@@ -76,6 +83,7 @@ public class GameplayTree : MonoBehaviour
 
         UpdateState();
         dust.Play();
+        GameObject.FindGameObjectWithTag("GameplayManager").GetComponent<GameplayManager>().AddSpores(captureVariety, sporeReward);
         // play particle effect
     }
 }

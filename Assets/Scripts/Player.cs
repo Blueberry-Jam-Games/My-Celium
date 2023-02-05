@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
+
 
 public class Player : MonoBehaviour
 {
@@ -13,6 +15,9 @@ public class Player : MonoBehaviour
     private bool enableKey = false;
     public GameObject objectToSpawn;
     public Vector3 mushroomOffset;
+
+    public VisualEffect dustRight;
+    public VisualEffect dustLeft;
 
     private MushroomRoot rootMushroom;
     private MushroomNode currentlyIn = null;
@@ -27,6 +32,9 @@ public class Player : MonoBehaviour
     public int spore3Increase = 10;
 
     private PopUpScreens popUp;
+    private CircularMenu circleMenu;
+
+    private AnimationState animState = AnimationState.IDLE_R;
 
     void Start()
     {
@@ -39,66 +47,108 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         gameplayManager = GameObject.FindWithTag("GameplayManager").GetComponent<GameplayManager>();
         popUp = GameObject.FindWithTag("PopUps").GetComponent<PopUpScreens>();
+        circleMenu = GameObject.FindWithTag("PopUps").GetComponent<CircularMenu>();
     }
 
-    AnimationState animState = AnimationState.IDLE_R;
+    private IEnumerator AttackFunction()
+    {
+        yield return new WaitForSeconds(1.05f);
+        if(animState == AnimationState.ATK_R)
+        {
+            dustRight.Play();
+        }
+        else if(animState == AnimationState.ATK_L)
+        {
+            dustLeft.Play();
+        }
+
+        yield return new WaitForSeconds(0.15f);
+
+        if(animState == AnimationState.ATK_R)
+        {
+            animState = AnimationState.IDLE_R;
+        }
+        else if(animState == AnimationState.ATK_L)
+        {
+            animState = AnimationState.ATK_L;
+        }
+    }
 
     void Update()
     {
         horizontalMovement = Input.GetAxisRaw("Horizontal");
         verticalMovement = Input.GetAxisRaw("Vertical");
-        SpawnMushroom();
 
-        if(horizontalMovement == 0f && verticalMovement == 0f)
+        if(Input.GetKeyDown(KeyCode.Space) && (animState != AnimationState.ATK_R || animState != AnimationState.ATK_L))
         {
-            if(animState == AnimationState.RUN_R)
+            if(animState == AnimationState.RUN_R || animState == AnimationState.IDLE_R)
             {
-                animState = AnimationState.IDLE_R;
-                animator.SetTrigger("IdleRight");
+                animState = AnimationState.ATK_R;
+                animator.SetTrigger("AtkRight");
             }
-            else if(animState == AnimationState.RUN_L)
+            else
             {
-                animState = AnimationState.IDLE_L;
-                animator.SetTrigger("IdleLeft");
+                animState = AnimationState.ATK_L;
+                animator.SetTrigger("AtkLeft");
             }
+            rb.velocity = Vector3.zero;
+            StartCoroutine(AttackFunction());
         }
-        else if(animState == AnimationState.IDLE_L || animState == AnimationState.IDLE_R)
+
+        if(animState != AnimationState.ATK_R || animState != AnimationState.ATK_L)
         {
-            if(horizontalMovement < 0f)
+            SpawnMushroom();
+            if(horizontalMovement == 0f && verticalMovement == 0f)
             {
-                animState = AnimationState.RUN_R;
-                animator.SetTrigger("RunRight");
+                if(animState == AnimationState.RUN_R)
+                {
+                    animState = AnimationState.IDLE_R;
+                    animator.SetTrigger("IdleRight");
+                }
+                else if(animState == AnimationState.RUN_L)
+                {
+                    animState = AnimationState.IDLE_L;
+                    animator.SetTrigger("IdleLeft");
+                }
             }
-            else if(horizontalMovement > 0f)
+            else if(animState == AnimationState.IDLE_L || animState == AnimationState.IDLE_R)
             {
-                animState = AnimationState.RUN_L;
-                animator.SetTrigger("RunLeft");
-            }
-            else if(horizontalMovement == 0f)
-            {
-                if(animState == AnimationState.IDLE_R)
+                if(horizontalMovement < 0f)
                 {
                     animState = AnimationState.RUN_R;
                     animator.SetTrigger("RunRight");
                 }
-                else
+                else if(horizontalMovement > 0f)
                 {
                     animState = AnimationState.RUN_L;
                     animator.SetTrigger("RunLeft");
                 }
+                else if(horizontalMovement == 0f)
+                {
+                    if(animState == AnimationState.IDLE_R)
+                    {
+                        animState = AnimationState.RUN_R;
+                        animator.SetTrigger("RunRight");
+                    }
+                    else
+                    {
+                        animState = AnimationState.RUN_L;
+                        animator.SetTrigger("RunLeft");
+                    }
+                }
             }
-        }
-        else
-        {
-            if(horizontalMovement < 0f && animState != AnimationState.RUN_R)
+            else
             {
-                animState = AnimationState.RUN_R;
-                animator.SetTrigger("RunRight");
-            }
-            else if(horizontalMovement > 0f && animState != AnimationState.RUN_L)
-            {
-                animState = AnimationState.RUN_L;
-                animator.SetTrigger("RunLeft");
+                if(horizontalMovement < 0f && animState != AnimationState.RUN_R)
+                {
+                    animState = AnimationState.RUN_R;
+                    animator.SetTrigger("RunRight");
+                }
+                else if(horizontalMovement > 0f && animState != AnimationState.RUN_L)
+                {
+                    animState = AnimationState.RUN_L;
+                    animator.SetTrigger("RunLeft");
+                }
             }
         }
     }
@@ -131,31 +181,35 @@ public class Player : MonoBehaviour
         if (enableKey && Input.GetKeyDown(KeyCode.E))
         {
             Debug.Log("Pressed e");
-            GameObject newMushroom = Instantiate(objectToSpawn);
-            MushroomNode component = newMushroom.GetComponent<MushroomNode>();
 
-            Vector3 pos = transform.position + mushroomOffset;
+            circleMenu.Pause();
 
-            newMushroom.transform.position = pos;
-
-            rootMushroom.children.Add(component);
-            currentlyIn.children.Add(component);
-
-            if (gameplayManager.state == GameplayManager.gameState.Level1)
-            {
-                gameplayManager.SetSpore1(gameplayManager.GetSpore1() + spore1Increase);
-            } else if (gameplayManager.state == GameplayManager.gameState.Level2)
-            {
-                gameplayManager.SetSpore1(gameplayManager.GetSpore1() + spore1Increase);
-                gameplayManager.SetSpore2(gameplayManager.GetSpore2() + spore2Increase);
-            } else {
-                gameplayManager.SetSpore1(gameplayManager.GetSpore1() + spore1Increase);
-                gameplayManager.SetSpore2(gameplayManager.GetSpore2() + spore2Increase);
-                gameplayManager.SetSpore3(gameplayManager.GetSpore3() + spore3Increase);
-            }
-
-            popUp.UpdateSporeCounter();
+            
         }
+    }
+
+    public void SpawnMushroomFunctionality(int variant)
+    {
+        GameObject newMushroom = Instantiate(objectToSpawn);
+        newMushroom.GetComponent<MushroomNode>().Configure(variant);
+        MushroomNode component = newMushroom.GetComponent<MushroomNode>();
+
+        if (variant == 0)
+        {
+            gameplayManager.SetSpore1(gameplayManager.GetSpore1() - 200);
+        } else if (variant == 1)
+        {
+            gameplayManager.SetSpore2(gameplayManager.GetSpore2() - 200);
+        } else {
+            gameplayManager.SetSpore3(gameplayManager.GetSpore3() - 200);
+        }
+
+        Vector3 pos = transform.position + mushroomOffset;
+
+        newMushroom.transform.position = pos;
+
+        rootMushroom.children.Add(component);
+        currentlyIn.children.Add(component);
     }
 
     void OnTriggerEnter(Collider collider)
@@ -189,5 +243,5 @@ public class Player : MonoBehaviour
 
 public enum AnimationState
 {
-    IDLE_R, IDLE_L, RUN_R, RUN_L
+    IDLE_R, IDLE_L, RUN_R, RUN_L, ATK_R, ATK_L
 }

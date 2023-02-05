@@ -11,7 +11,7 @@ public class TreeCapture : MonoBehaviour
         if (collider.CompareTag("Tree"))
         {
             GameplayTree otherTree = collider.GetComponent<GameplayTree>();
-            otherTree.AddCapture();
+            otherTree.AddCapture(0); // TODO replace 0 with mushroom variety
         }
     }
 
