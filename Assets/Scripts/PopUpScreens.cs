@@ -13,6 +13,9 @@ public class PopUpScreens : MonoBehaviour
     private TextMeshProUGUI sporeThreeText;
     private Image button2;
     private Image button3;
+    public Sprite setImage2;
+    public Sprite setImage3;
+
 
     [Header("Witch Objects")]
     public GameObject witchUpgrade;
@@ -108,7 +111,7 @@ public class PopUpScreens : MonoBehaviour
     {
         if (gameplayManager.GetSpore1() >= 50)
         {
-            button2.color = new Color32(0, 255, 249, 255);
+            button2.sprite = setImage2;
             gameplayManager.SetSpore1(gameplayManager.GetSpore1() - 50);
             gameplayManager.SetSpore2(200);
             sporeOneText.text = gameplayManager.GetSpore1().ToString();
@@ -122,7 +125,7 @@ public class PopUpScreens : MonoBehaviour
     {
         if (gameplayManager.GetSpore2() >= 50)
         {
-            button3.color = new Color32(0, 255, 249, 255);
+            button3.sprite = setImage3;
             gameplayManager.SetSpore2(gameplayManager.GetSpore2() - 50);
             gameplayManager.SetSpore3(200);
             sporeTwoText.text = gameplayManager.GetSpore2().ToString();
