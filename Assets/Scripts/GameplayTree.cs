@@ -69,6 +69,7 @@ public class GameplayTree : MonoBehaviour
 
     private IEnumerator Collapse()
     {
+        GetComponent<BaseAudioManager>().Play("Fall");
         // rotate log down
         Vector3 originalRotation = corrupt.transform.rotation.eulerAngles;
         Vector3 position = corrupt.transform.position;
