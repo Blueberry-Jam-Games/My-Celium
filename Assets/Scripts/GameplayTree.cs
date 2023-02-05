@@ -31,6 +31,24 @@ public class GameplayTree : MonoBehaviour
     {
         captureCount++;
         this.captureVariety = captureVariety;
+
+        if (captureVariety == 0)
+        {
+            captureTime = 10f;
+            logTime = 10f;
+            fallTime = 1f;
+        } else if (captureVariety == 1)
+        {
+            captureTime = 30f;
+            logTime = 30f;
+            fallTime = 1f;
+        } else 
+        {
+            captureTime = 4f;
+            logTime = 4f;
+            fallTime = 1f;
+        }
+        
         if (captureCount == 1)
         {
             StartCoroutine(Capture());
