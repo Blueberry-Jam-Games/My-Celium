@@ -34,6 +34,10 @@ public class PopUpScreens : MonoBehaviour
 
     public float modifier = 1.0f;
 
+    public float broommodifier = 1.0f;
+
+    public float spellmodifier = 1.0f;
+
     void Start()
     {
         sporeOneText = GameObject.Find("CauldronUpgrade/Currency/Currency1/Count").GetComponent<TextMeshProUGUI>();
@@ -59,6 +63,7 @@ public class PopUpScreens : MonoBehaviour
             gameplayManager.SetSpore1(gameplayManager.GetSpore1() - 3000);
             UpdateSporeCounter();
             sporeOneTextWitch.text = gameplayManager.GetSpore1().ToString();
+            spellmodifier = 2.0f;
         }
     }
 
@@ -70,6 +75,7 @@ public class PopUpScreens : MonoBehaviour
             gameplayManager.SetSpore3(gameplayManager.GetSpore3() - 3000);
             UpdateSporeCounter();
             sporeThreeTextWitch.text = gameplayManager.GetSpore3().ToString();
+            spellmodifier = 3.0f;
         }
     }
 
@@ -81,6 +87,7 @@ public class PopUpScreens : MonoBehaviour
             gameplayManager.SetSpore2(gameplayManager.GetSpore2() - 2500);
             UpdateSporeCounter();
             sporeTwoTextWitch.text = gameplayManager.GetSpore1().ToString();
+            broommodifier = 3.0f;
         }
     }
 
