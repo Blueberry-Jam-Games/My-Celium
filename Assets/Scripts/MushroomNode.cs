@@ -5,18 +5,21 @@ using UnityEngine;
 public class MushroomNode : MushroomHolder
 {
     public float height = 0;
-    public float[] growthTime = new float[]{15, 10, 20};
+    // public float[] growthTime = new float[]{15, 10, 20};
 
     private float startTime;
     public float growth = 0f;
-
     public float Growth {get => growth;}
 
-    public int[] VariantSpores = new int[]{5, 10, 15};
+    // public int[] VariantSpores = new int[]{5, 10, 15};
+
+    public Variant[] variants;
 
     private bool initialGrowth = false;
 
     private GameplayManager gameplayManager;
+
+    public int variant = 0;
 
     void Start()
     {
@@ -33,12 +36,22 @@ public class MushroomNode : MushroomHolder
         UpdateScale();
     }
 
+    // This is the entry point to set what type of mushroom this is, do it right after the Instantiate call
+    public void Configure(int variant)
+    {
+        this.variant = variant;
+        for(int i = 0, count = variants.Length; i < count; i++)
+        {
+            variants[i].visual.SetActive(i == variant);
+        }
+    }
+
     void Update()
     {
         if(growth < 1f)
         {
             float deltaTime = Time.time - startTime;
-            growth = deltaTime / growthTime[0]; // TODO replace [0] with variant 
+            growth = deltaTime / variants[variant].growthTime; // TODO replace [0] with variant 
             if(growth >= 1f)
             {
                 growth = 1f;
@@ -61,7 +74,7 @@ public class MushroomNode : MushroomHolder
         WaitForSeconds delay = new WaitForSeconds(0.5f);
         while(this.isActiveAndEnabled)
         {
-            gameplayManager.AddSpores(0, VariantSpores[0]); // TODO Replace 0 with the spore variant
+            gameplayManager.AddSpores(0, variants[variant].sporeProduction); // TODO Replace 0 with the spore variant
             yield return delay;
 
         }
@@ -77,4 +90,12 @@ public class MushroomNode : MushroomHolder
         float newScale = Mathf.Pow(Mathf.Lerp(0.25f, 1f, growth), 2);
         transform.localScale = new Vector3(newScale, newScale, newScale);
     }
+}
+
+[System.Serializable]
+public class Variant
+{
+    public GameObject visual;
+    public float growthTime;
+    public int sporeProduction;
 }
