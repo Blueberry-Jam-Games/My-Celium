@@ -36,6 +36,8 @@ public class Player : MonoBehaviour
 
     private AnimationState animState = AnimationState.IDLE_R;
 
+    public AudioSource walkingSound;
+
     void Start()
     {
         Vector3 pos = transform.position;
@@ -53,6 +55,7 @@ public class Player : MonoBehaviour
     private IEnumerator AttackFunction()
     {
         yield return new WaitForSeconds(1.05f);
+        GetComponent<BaseAudioManager>().Play("Attack");
         if(animState == AnimationState.ATK_R)
         {
             dustRight.Play();
@@ -104,11 +107,13 @@ public class Player : MonoBehaviour
                 {
                     animState = AnimationState.IDLE_R;
                     animator.SetTrigger("IdleRight");
+                    walkingSound.Stop();
                 }
                 else if(animState == AnimationState.RUN_L)
                 {
                     animState = AnimationState.IDLE_L;
                     animator.SetTrigger("IdleLeft");
+                    walkingSound.Stop();
                 }
             }
             else if(animState == AnimationState.IDLE_L || animState == AnimationState.IDLE_R)
@@ -117,11 +122,13 @@ public class Player : MonoBehaviour
                 {
                     animState = AnimationState.RUN_R;
                     animator.SetTrigger("RunRight");
+                    walkingSound.Play();
                 }
                 else if(horizontalMovement > 0f)
                 {
                     animState = AnimationState.RUN_L;
                     animator.SetTrigger("RunLeft");
+                    walkingSound.Play();
                 }
                 else if(horizontalMovement == 0f)
                 {
@@ -129,11 +136,13 @@ public class Player : MonoBehaviour
                     {
                         animState = AnimationState.RUN_R;
                         animator.SetTrigger("RunRight");
+                        walkingSound.Play();
                     }
                     else
                     {
                         animState = AnimationState.RUN_L;
                         animator.SetTrigger("RunLeft");
+                        walkingSound.Play();
                     }
                 }
             }
@@ -207,6 +216,8 @@ public class Player : MonoBehaviour
         Vector3 pos = transform.position + mushroomOffset;
 
         newMushroom.transform.position = pos;
+
+        GetComponent<BaseAudioManager>().Play("Plant");
 
         rootMushroom.children.Add(component);
         currentlyIn.children.Add(component);

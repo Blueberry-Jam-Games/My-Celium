@@ -13,7 +13,12 @@ public class BaseAudioManager : MonoBehaviour
         {
             s.source = gameObject.AddComponent<AudioSource>();
             soundsByName.Add(s.name, s);
-        }        
+            s.source.clip = s.clip;
+            s.source.volume = s.volume;
+            s.source.pitch = s.pitch;
+            s.source.spatialBlend = s.dimensionality;
+            s.source.playOnAwake = false;
+        }
     }
 
     public void Play(string name)
@@ -41,16 +46,6 @@ public class Sound
     public float pitch;
     [Range(0, 1)]
     public float dimensionality;
-
-    public void SetSource(AudioSource src)
-    {
-        this.source = src;
-        source.clip = clip;
-        source.volume = volume;
-        source.pitch = pitch;
-        source.spatialBlend = dimensionality;
-        source.playOnAwake = false;
-    }
 
     [HideInInspector]
     public AudioSource source;
