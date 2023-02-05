@@ -22,8 +22,11 @@ public class GameplayTree : MonoBehaviour
 
     public int sporeReward = 200;
 
+    private PopUpScreens popUp;
+
     void Start()
     {
+        popUp = GameObject.FindWithTag("PopUps").GetComponent<PopUpScreens>();
         UpdateState();
     }
 
@@ -48,7 +51,10 @@ public class GameplayTree : MonoBehaviour
             logTime = 4f;
             fallTime = 1f;
         }
-        
+
+        captureTime /= popUp.modifier;
+        logTime /= popUp.modifier;
+
         if (captureCount == 1)
         {
             StartCoroutine(Capture());
