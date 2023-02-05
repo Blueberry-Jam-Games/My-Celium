@@ -28,7 +28,7 @@ public class MushroomNode : MushroomHolder
         children = new List<MushroomNode>();
 
         Vector3 pos = transform.position;
-        pos.y = Terrain.activeTerrain.SampleHeight(transform.position);
+        pos.y = Terrain.activeTerrain.SampleHeight(transform.position) + 1.0f;
         transform.position = pos;
 
         startTime = Time.time;
@@ -74,7 +74,7 @@ public class MushroomNode : MushroomHolder
         WaitForSeconds delay = new WaitForSeconds(0.5f);
         while(this.isActiveAndEnabled)
         {
-            gameplayManager.AddSpores(0, variants[variant].sporeProduction); // TODO Replace 0 with the spore variant
+            gameplayManager.AddSpores(variant, variants[variant].sporeProduction); // TODO Replace 0 with the spore variant
             yield return delay;
 
         }

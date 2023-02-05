@@ -49,9 +49,11 @@ public class PopUpScreens : MonoBehaviour
         {
             button2.color = new Color32(0, 255, 249, 255);
             gameplayManager.SetSpore1(gameplayManager.GetSpore1() - 50);
+            gameplayManager.SetSpore2(200);
             sporeOneText.text = gameplayManager.GetSpore1().ToString();
             gameplayManager.IncreaseLevel();
             UpdateSporeCounter();
+            GetComponent<CircularMenu>().buttons[1].enabled = true;
         }
     }
 
@@ -61,9 +63,11 @@ public class PopUpScreens : MonoBehaviour
         {
             button3.color = new Color32(0, 255, 249, 255);
             gameplayManager.SetSpore2(gameplayManager.GetSpore2() - 50);
+            gameplayManager.SetSpore3(200);
             sporeTwoText.text = gameplayManager.GetSpore2().ToString();
             gameplayManager.IncreaseLevel();
             UpdateSporeCounter();
+            GetComponent<CircularMenu>().buttons[2].enabled = true;
         }
     }
 

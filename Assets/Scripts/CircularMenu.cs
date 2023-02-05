@@ -18,14 +18,22 @@ public class CircularMenu : MonoBehaviour
     public int currentMenuItem;
     private int oldMenuItem;
 
+    private Player Player;
+    private GameplayManager gameplayManager;
+
+    private int variant = 0;
     // Start is called before the first frame update
     void Start()
     {
-        
+        Player = GameObject.FindWithTag("Player").GetComponent<Player>();
+        gameplayManager = GameObject.FindWithTag("GameplayManager").GetComponent<GameplayManager>();
         menuItems = buttons.Count;
         foreach(MenuButton button in buttons){
             button.sceneImage.color = button.NormalColor;
         }
+        buttons[0].enabled = true;
+        buttons[1].enabled = false;
+        buttons[2].enabled = false;
 
         currentMenuItem = 0;
         oldMenuItem = 0;
@@ -34,14 +42,7 @@ public class CircularMenu : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-
-        if(Input.GetKeyDown(KeyCode.Tab)){
-
-            Pause();
-
-        }
-        
+    {   
         if(canvas.gameObject.activeInHierarchy == true){
 
             getCurrentMenuItem();
@@ -75,7 +76,6 @@ public class CircularMenu : MonoBehaviour
         if((angle >= 0 && angle <= 45) || angle > 315 && angle < 360){
 
             currentMenuItem = 0;
-
         }
 
         else if(angle > 45 && angle <= 135){
@@ -90,11 +90,11 @@ public class CircularMenu : MonoBehaviour
 
         }
 
-        else if(angle > 225 && angle <= 315){
+        /*else if(angle > 225 && angle <= 315){
 
             currentMenuItem = 3;
 
-        }
+        }*/
 
         if(currentMenuItem != oldMenuItem){
 
@@ -109,25 +109,41 @@ public class CircularMenu : MonoBehaviour
     public void ButtonAction(){
 
         buttons[currentMenuItem].sceneImage.color = buttons[currentMenuItem].PressedColor;
-        if(currentMenuItem == 0){
+        if(currentMenuItem == 0 && buttons[0].enabled){
 
             print("Option 1");
-
+            variant = 0;
+            if (gameplayManager.GetSpore1() >= 200)
+            {
+                Player.SpawnMushroomFunctionality(variant);
+            }
         }
-        else if(currentMenuItem == 1){
+        else if(currentMenuItem == 1 && buttons[1].enabled){
 
             print("Option 2");
-
+            variant = 1;
+            if (gameplayManager.GetSpore2() >= 200)
+            {
+                Player.SpawnMushroomFunctionality(variant);
+            }
         }
-        else if(currentMenuItem == 2){
+        else if(currentMenuItem == 2 && buttons[2].enabled){
 
             print("Option 3");
-
+            variant = 2;
+            if (gameplayManager.GetSpore3() >= 200)
+            {
+                Player.SpawnMushroomFunctionality(variant);
+            }
         }
         else if(currentMenuItem == 3){
 
             print("Option 4");
-
+            variant = 2;
+            if (gameplayManager.GetSpore3() >= 200)
+            {
+                Player.SpawnMushroomFunctionality(variant);
+            }
         }
 
         Pause();
@@ -137,30 +153,48 @@ public class CircularMenu : MonoBehaviour
 
     public void keyAction(){
 
-        if(Input.GetKeyDown(KeyCode.W)){
+        if(Input.GetKeyDown(KeyCode.W) && buttons[0].enabled){
 
             buttons[0].sceneImage.color = buttons[0].PressedColor;
             print("Option 1");
-
+            variant = 0;
+            if (gameplayManager.GetSpore1() >= 200)
+            {
+                Player.SpawnMushroomFunctionality(variant);
+            }
         }
 
-        else if(Input.GetKeyDown(KeyCode.D)){
+        else if(Input.GetKeyDown(KeyCode.D) && buttons[1].enabled){
 
             buttons[1].sceneImage.color = buttons[1].PressedColor;
             print("Option 2");
-
+            variant = 1;
+            if (gameplayManager.GetSpore2() >= 200)
+            {
+                Player.SpawnMushroomFunctionality(variant);
+            }
         }
 
-        else if(Input.GetKeyDown(KeyCode.S)){
+        else if(Input.GetKeyDown(KeyCode.S) && buttons[2].enabled){
 
             buttons[2].sceneImage.color = buttons[2].PressedColor;
             print("Option 3");
+            variant = 2;
+            if (gameplayManager.GetSpore3() >= 200)
+            {
+                Player.SpawnMushroomFunctionality(variant);
+            }
         }
 
         else if(Input.GetKeyDown(KeyCode.A)){
 
             buttons[3].sceneImage.color = buttons[3].PressedColor;
             print("Option 4");
+            variant = 2;
+            if (gameplayManager.GetSpore3() >= 200)
+            {
+                Player.SpawnMushroomFunctionality(variant);
+            }
         }
 
         Pause();
@@ -190,12 +224,12 @@ public class CircularMenu : MonoBehaviour
 }
 
 [System.Serializable]
-public class MenuButton{
-
+public class MenuButton
+{
     public string name;
     public Image sceneImage;
     public Color NormalColor = Color.white;
     public Color HighlightedColor = Color.grey;
     public Color PressedColor = Color.gray;
-
+    public bool enabled;
 }
