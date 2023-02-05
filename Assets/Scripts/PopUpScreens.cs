@@ -16,6 +16,9 @@ public class PopUpScreens : MonoBehaviour
 
     [Header("Witch Objects")]
     public GameObject witchUpgrade;
+    private TextMeshProUGUI sporeOneTextWitch;
+    private TextMeshProUGUI sporeTwoTextWitch;
+    private TextMeshProUGUI sporeThreeTextWitch;
 
     [Header("Text References")]
     public GameObject textPopUp;
@@ -34,6 +37,9 @@ public class PopUpScreens : MonoBehaviour
         sporeOneText = GameObject.Find("CauldronUpgrade/Currency/Currency1/Count").GetComponent<TextMeshProUGUI>();
         sporeTwoText = GameObject.Find("CauldronUpgrade/Currency/Currency2/Count").GetComponent<TextMeshProUGUI>();
         sporeThreeText = GameObject.Find("CauldronUpgrade/Currency/Currency3/Count").GetComponent<TextMeshProUGUI>();
+        sporeOneTextWitch = GameObject.Find("Upgrades/Currency/Currency1/Count").GetComponent<TextMeshProUGUI>();
+        sporeTwoTextWitch = GameObject.Find("Upgrades/Currency/Currency2/Count").GetComponent<TextMeshProUGUI>();
+        sporeThreeTextWitch = GameObject.Find("Upgrades/Currency/Currency3/Count").GetComponent<TextMeshProUGUI>();
         sporeOneCounter = GameObject.Find("SporeCounter/Spore1").GetComponent<TextMeshProUGUI>();
         sporeTwoCounter = GameObject.Find("SporeCounter/Spore2").GetComponent<TextMeshProUGUI>();
         button2 = GameObject.Find("CauldronUpgrade/UpgradeView/Centerer/PathHeight/SkillTree1 (1)/Skill1").GetComponent<Image>();
@@ -41,6 +47,61 @@ public class PopUpScreens : MonoBehaviour
         sporeThreeCounter = GameObject.Find("SporeCounter/Spore3").GetComponent<TextMeshProUGUI>();
         textObject = GameObject.Find("PopUpInstruction/PopUp").GetComponent<TextMeshProUGUI>();
         gameplayManager = GameObject.FindWithTag("GameplayManager").GetComponent<GameplayManager>();
+    }
+
+    public void LongRangeSpell(GameObject button)
+    {
+        if (gameplayManager.GetSpore1() >= 3000)
+        {
+            button.GetComponent<Image>().color = new Color32(0, 255, 249, 255);
+            gameplayManager.SetSpore1(gameplayManager.GetSpore1() - 3000);
+            UpdateSporeCounter();
+            sporeOneTextWitch.text = gameplayManager.GetSpore1().ToString();
+        }
+    }
+
+    public void SpellPlus(GameObject button)
+    {
+        if (gameplayManager.GetSpore3() >= 3000)
+        {
+            button.GetComponent<Image>().color = new Color32(0, 255, 249, 255);
+            gameplayManager.SetSpore3(gameplayManager.GetSpore3() - 3000);
+            UpdateSporeCounter();
+            sporeThreeTextWitch.text = gameplayManager.GetSpore3().ToString();
+        }
+    }
+
+    public void BroomPlus(GameObject button)
+    {
+        if (gameplayManager.GetSpore2() >= 2500)
+        {
+            button.GetComponent<Image>().color = new Color32(0, 255, 249, 255);
+            gameplayManager.SetSpore2(gameplayManager.GetSpore2() - 2500);
+            UpdateSporeCounter();
+            sporeTwoTextWitch.text = gameplayManager.GetSpore1().ToString();
+        }
+    }
+
+    public void TreeKnockdown(GameObject button)
+    {
+        if (gameplayManager.GetSpore1() >= 6000)
+        {
+            button.GetComponent<Image>().color = new Color32(0, 255, 249, 255);
+            gameplayManager.SetSpore1(gameplayManager.GetSpore1() - 6000);
+            UpdateSporeCounter();
+            sporeOneTextWitch.text = gameplayManager.GetSpore1().ToString();
+        }
+    }
+
+    public void StrongerKnockdown(GameObject button)
+    {
+        if (gameplayManager.GetSpore3() >= 6000)
+        {
+            button.GetComponent<Image>().color = new Color32(0, 255, 249, 255);
+            gameplayManager.SetSpore3(gameplayManager.GetSpore3() - 6000);
+            UpdateSporeCounter();
+            sporeThreeTextWitch.text = gameplayManager.GetSpore1().ToString();
+        }
     }
 
     public void Level2Check()
@@ -94,6 +155,9 @@ public class PopUpScreens : MonoBehaviour
     public void EnableWitchUpgrade()
     {
         witchUpgrade.GetComponent<Canvas>().enabled = true;
+        sporeOneTextWitch.text = gameplayManager.GetSpore1().ToString();
+        sporeTwoTextWitch.text = gameplayManager.GetSpore2().ToString();
+        sporeThreeTextWitch.text = gameplayManager.GetSpore3().ToString();
     }
 
     public void DisableWitchUpgrade()

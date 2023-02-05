@@ -192,8 +192,6 @@ public class Player : MonoBehaviour
             Debug.Log("Pressed e");
 
             circleMenu.Pause();
-
-            
         }
     }
 
@@ -238,6 +236,9 @@ public class Player : MonoBehaviour
         } else if (collider.CompareTag("Cauldron"))
         {
             popUp.EnableCauldronUpgrade();
+        } else if (collider.CompareTag("Hut"))
+        {
+            popUp.EnableWitchUpgrade();
         }
     }
     void OnTriggerExit(Collider collider)

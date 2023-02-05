@@ -11,6 +11,7 @@ TagManager:
   - PopUps
   - GameplayManager
   - Broom
+  - Hut
   layers:
   - Default
   - TransparentFX
