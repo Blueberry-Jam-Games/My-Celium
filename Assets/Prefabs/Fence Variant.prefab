@@ -10,7 +10,12 @@ PrefabInstance:
     - target: {fileID: 934559242296729012, guid: 6f62c1573411c344ca90dda53798f9c2,
         type: 3}
       propertyPath: m_Name
-      value: Fence
+      value: Fence Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 934559242296729012, guid: 6f62c1573411c344ca90dda53798f9c2,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4873284004960083462, guid: 6f62c1573411c344ca90dda53798f9c2,
         type: 3}

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class GameplayManager : MonoBehaviour
 {
-    private int spore1 = 0;
-    private int spore2 = 0;
-    private int spore3 = 0;
+    public int spore1 = 0;
+    public int spore2 = 0;
+    public int spore3 = 0;
 
     public gameState state;
     private PopUpScreens popUp;
@@ -14,9 +14,6 @@ public class GameplayManager : MonoBehaviour
     void Start()
     {
         state = gameState.Level1;
-        spore1 = 0;
-        spore2 = 0;
-        spore3 = 0;
 
         popUp = GameObject.FindWithTag("PopUps").GetComponent<PopUpScreens>();
     }

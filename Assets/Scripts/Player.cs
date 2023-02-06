@@ -225,7 +225,7 @@ public class Player : MonoBehaviour
     {
         if (collider.CompareTag("Mushroom"))
         {
-            popUp.EnableTextPopUpUpgrade("Press e to plant a Mushroom");
+            popUp.EnableTextPopUpUpgrade("[E] Plant Mushroom");
             Debug.Log("I have entered");
             currentlyIn = collider.GetComponent<MushroomNode>();
             if(currentlyIn.Grown())
